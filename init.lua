@@ -1,108 +1,14 @@
---[[
-
-=====================================================================
-==================== READ THIS BEFORE CONTINUING ====================
-=====================================================================
-========                                    .-----.          ========
-========         .----------------------.   | === |          ========
-========         |.-""""""""""""""""""-.|   |-----|          ========
-========         ||                    ||   | === |          ========
-========         ||   KICKSTART.NVIM   ||   |-----|          ========
-========         ||                    ||   | === |          ========
-========         ||                    ||   |-----|          ========
-========         ||:Tutor              ||   |:::::|          ========
-========         |'-..................-'|   |____o|          ========
-========         `"")----------------(""`   ___________      ========
-========        /::::::::::|  |::::::::::\  \ no mouse \     ========
-========       /:::========|  |==hjkl==:::\  \ required \    ========
-========      '""""""""""""'  '""""""""""""'  '""""""""""'   ========
-========                                                     ========
-=====================================================================
-=====================================================================
-
-What is Kickstart?
-
-  Kickstart.nvim is *not* a distribution.
-
-  Kickstart.nvim is a starting point for your own configuration.
-    The goal is that you can read every line of code, top-to-bottom, understand
-    what your configuration is doing, and modify it to suit your needs.
-
-    Once you've done that, you can start exploring, configuring and tinkering to
-    make Neovim your own! That might mean leaving Kickstart just the way it is for a while
-    or immediately breaking it into modular pieces. It's up to you!
-
-    If you don't know anything about Lua, I recommend taking some time to read through
-    a guide. One possible example which will only take 10-15 minutes:
-      - https://learnxinyminutes.com/docs/lua/
-
-    After understanding a bit more about Lua, you can use `:help lua-guide` as a
-    reference for how Neovim integrates Lua.
-    - :help lua-guide
-    - (or HTML version): https://neovim.io/doc/user/lua-guide.html
-
-Kickstart Guide:
-
-  TODO: The very first thing you should do is to run the command `:Tutor` in Neovim.
-
-    If you don't know what this means, type the following:
-      - <escape key>
-      - :
-      - Tutor
-      - <enter key>
-
-    (If you already know the Neovim basics, you can skip this step.)
-
-  Once you've completed that, you can continue working through **AND READING** the rest
-  of the kickstart init.lua.
-
-  Next, run AND READ `:help`.
-    This will open up a help window with some basic information
-    about reading, navigating and searching the builtin help documentation.
-
-    This should be the first place you go to look when you're stuck or confused
-    with something. It's one of my favorite Neovim features.
-
-    MOST IMPORTANTLY, we provide a keymap "<space>sh" to [s]earch the [h]elp documentation,
-    which is very useful when you're not exactly sure of what you're looking for.
-
-  I have left several `:help X` comments throughout the init.lua
-    These are hints about where to find more information about the relevant settings,
-    plugins or Neovim features used in Kickstart.
-
-   NOTE: Look for lines like this
-
-    Throughout the file. These are for you, the reader, to help you understand what is happening.
-    Feel free to delete them once you know what you're doing, but they should serve as a guide
-    for when you are first encountering a few different constructs in your Neovim config.
-
-If you experience any errors while trying to install kickstart, run `:checkhealth` for more info.
-
-I hope you enjoy your Neovim journey,
-- TJ
-
-P.S. You can delete this when you're done too. It's your config now! :)
---]]
-
 -- Set <space> as the leader key
--- See `:help mapleader`
---  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
--- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = false
 
 -- [[ Setting options ]]
--- See `:help vim.o`
--- NOTE: You can change these options as you wish!
---  For more options, you can see `:help option-list`
 
 -- Make line numbers default
 vim.o.number = true
--- You can also add relative line numbers, to help with jumping.
---  Experiment for yourself to see if you like it!
--- vim.o.relativenumber = true
+vim.o.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.o.mouse = 'a'
@@ -142,13 +48,6 @@ vim.o.splitright = true
 vim.o.splitbelow = true
 
 -- Sets how neovim will display certain whitespace characters in the editor.
---  See `:help 'list'`
---  and `:help 'listchars'`
---
---  Notice listchars is set using `vim.opt` instead of `vim.o`.
---  It is very similar to `vim.o` but offers an interface for conveniently interacting with tables.
---   See `:help lua-options`
---   and `:help lua-options-guide`
 vim.o.list = true
 vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 
@@ -184,11 +83,11 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 -- or just use <C-\><C-n> to exit terminal mode
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
--- TIP: Disable arrow keys in normal mode
--- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
--- vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
--- vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
--- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
+-- Disable arrow keys in normal mode
+vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
+vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
+vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
+vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
@@ -233,6 +132,16 @@ end
 ---@type vim.Option
 local rtp = vim.opt.rtp
 rtp:prepend(lazypath)
+
+-- Autosave TeX buffers when you leave insert mode (and on edits)
+vim.api.nvim_create_autocmd({ 'InsertLeave', 'TextChanged' }, {
+  pattern = { '*.tex', '*.bib', '*.sty' },
+  callback = function()
+    if vim.bo.modified and vim.bo.modifiable then
+      vim.cmd 'silent! write'
+    end
+  end,
+})
 
 -- [[ Configure and install plugins ]]
 --
@@ -284,12 +193,11 @@ require('lazy').setup({
     },
   },
 
-  -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
   --
   -- This is often very useful to both group configuration, as well as handle
   -- lazy loading plugins that don't need to be loaded immediately at startup.
   --
-  -- For example, in the following configuration, we use:
+  -- For example, in the following configuration, we usen
   --  event = 'VimEnter'
   --
   -- which loads which-key before all the UI elements are loaded. Events can be
@@ -358,6 +266,17 @@ require('lazy').setup({
   --
   -- Use the `dependencies` key to specify the dependencies of a particular plugin
 
+  -- ==== C# plugins ====
+  {
+    'd7omdev/nuget.nvim',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'nvim-telescope/telescope.nvim',
+    },
+    config = function()
+      require('nuget').setup()
+    end,
+  },
   { -- Fuzzy Finder (files, lsp, etc)
     'nvim-telescope/telescope.nvim',
     event = 'VimEnter',
@@ -671,7 +590,30 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        -- clangd = {},
+        -- C og C++
+        clangd = {},
+
+        omnisharp = {},
+        -- CMAKE (kræver Python-pakken "cmake_language-server")
+        cmake = {},
+
+        -- Python
+        basedpyright = {},
+        ruff = {
+          on_attach = function(client)
+            client.server_capabilities.hoverProvider = false
+          end,
+        },
+
+        -- rust
+        rust_analyzer = {
+          settings = {
+            ['rust-analyzer'] = {
+              check = { command = 'clippy' },
+            },
+          },
+        },
+
         -- gopls = {},
         -- pyright = {},
         -- rust_analyzer = {},
@@ -683,6 +625,22 @@ require('lazy').setup({
         -- But for many setups, the LSP (`ts_ls`) will work just fine
         -- ts_ls = {},
         --
+        texlab = {
+          settings = {
+            texlab = {
+              build = {
+                executable = 'latexmk',
+                args = { '-pdf', '-interaction=nonstopmode', '-synctex=1', '%f' },
+                onSave = true,
+              },
+              forwardSearch = {
+                executable = 'zathura', -- eller "okular", "evince", "skim" afhængigt af din PDF-viewer
+                args = { '--synctex-forward', '%l:1:%f', '%p' },
+              },
+              chktex = { onOpenAndSave = true, onEdit = false },
+            },
+          },
+        },
 
         lua_ls = {
           -- cmd = { ... },
@@ -713,11 +671,33 @@ require('lazy').setup({
       --
       -- You can add other tools here that you want Mason to install
       -- for you, so that they are available from within Neovim.
-      local ensure_installed = vim.tbl_keys(servers or {})
+      -- Byg korrekt ensure_installed-liste til Mason
+      local ensure_installed = {}
+
+      -- Map LSP-navne (fra lspconfig) til Mason-pakkenavne, hvor de adskiller sig
+      local mason_map = {
+        ruff = 'ruff',
+        rust_analyzer = 'rust-analyzer',
+        lua_ls = 'lua-language-server',
+        cmake = 'cmake-language-server',
+        texlab = 'texlab',
+        -- clangd og basedpyright hedder det samme i Mason
+      }
+
+      -- Gennemgå alle servers og tilføj deres Mason-navn
+      for name, _ in pairs(servers or {}) do
+        table.insert(ensure_installed, mason_map[name] or name)
+      end
+
+      -- Tilføj dine ekstra tools her
       vim.list_extend(ensure_installed, {
-        'stylua', -- Used to format Lua code
+        'stylua', -- formatter for Lua
       })
-      require('mason-tool-installer').setup { ensure_installed = ensure_installed }
+
+      -- Kør mason-tool-installer
+      require('mason-tool-installer').setup {
+        ensure_installed = ensure_installed,
+      }
 
       require('mason-lspconfig').setup {
         ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
@@ -777,37 +757,31 @@ require('lazy').setup({
     },
   },
 
+  {
+    'lervag/vimtex',
+    ft = { 'tex' },
+    init = function()
+      vim.g.vimtex_view_method = 'zathura' -- eller 'general' / 'evince' / 'skim' alt efter syste
+      vim.g.vimtex_view_automatic = 1
+      vim.g.vimtex_compiler_method = 'latexmk' -- standard compiler
+      vim.g.vimtex_compiler_latexmk =
+        { continuous = 1, callback = 1, options = {
+          '-pdf',
+          '-interaction=nonstopmode',
+          '-synctex=1',
+        } } -- keep watching and rebuilding
+      vim.g.vimtex_quickfix_mode = 0 -- undgå quickfix-popups
+
+      -- slå standard-maps til (som i “det virkede før”)
+      vim.g.vimtex_mappings_enabled = 1
+    end,
+  },
+
   { -- Autocompletion
     'saghen/blink.cmp',
     event = 'VimEnter',
     version = '1.*',
     dependencies = {
-      -- Snippet Engine
-      {
-        'L3MON4D3/LuaSnip',
-        version = '2.*',
-        build = (function()
-          -- Build Step is needed for regex support in snippets.
-          -- This step is not supported in many windows environments.
-          -- Remove the below condition to re-enable on windows.
-          if vim.fn.has 'win32' == 1 or vim.fn.executable 'make' == 0 then
-            return
-          end
-          return 'make install_jsregexp'
-        end)(),
-        dependencies = {
-          -- `friendly-snippets` contains a variety of premade snippets.
-          --    See the README about individual language/framework/plugin snippets:
-          --    https://github.com/rafamadriz/friendly-snippets
-          -- {
-          --   'rafamadriz/friendly-snippets',
-          --   config = function()
-          --     require('luasnip.loaders.from_vscode').lazy_load()
-          --   end,
-          -- },
-        },
-        opts = {},
-      },
       'folke/lazydev.nvim',
     },
     --- @module 'blink.cmp'
@@ -835,7 +809,7 @@ require('lazy').setup({
         -- <c-k>: Toggle signature help
         --
         -- See :h blink-cmp-config-keymap for defining your own keymap
-        preset = 'default',
+        preset = 'super-tab',
 
         -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
         --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
@@ -854,7 +828,7 @@ require('lazy').setup({
       },
 
       sources = {
-        default = { 'lsp', 'path', 'snippets', 'lazydev' },
+        default = { 'lsp', 'snippets', 'path', 'lazydev' },
         providers = {
           lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
         },
@@ -874,6 +848,58 @@ require('lazy').setup({
       -- Shows a signature help window while you type arguments for a function
       signature = { enabled = true },
     },
+  },
+
+  {
+    'L3MON4D3/LuaSnip',
+    build = 'make install_jsregexp',
+    dependencies = { 'rafamadriz/friendly-snippets' },
+    config = function()
+      local ls = require 'luasnip'
+
+      -- Indstillinger
+      ls.config.set_config {
+        enable_autosnippets = true,
+        updateevents = 'TextChanged,TextChangedI',
+      }
+
+      -- Indlæs snippets
+      require('luasnip.loaders.from_vscode').lazy_load()
+      require('luasnip.loaders.from_lua').lazy_load {
+        paths = { vim.fn.stdpath 'config' .. '/luasnippets' },
+      }
+
+      -- Filetype-udvidelse (så tex-snippets virker i latex/plaintex)
+      ls.filetype_extend('latex', { 'tex' })
+      ls.filetype_extend('plaintex', { 'tex' })
+
+      -- Smart <Tab>/<S-Tab> (planlagt for at undgå E565)
+      --   vim.keymap.set({ 'i', 's' }, '<Tab>', function()
+      --   if ls.expand_or_jumpable() then
+      --   vim.schedule(function()
+      --   ls.expand_or_jump()
+      --  end)
+      -- return ''
+      --elseif vim.fn.pumvisible() == 1 then
+      --return '<C-n>'
+      --else
+      --return '\t'
+      --end
+      --end, { expr = true, silent = true })
+
+      --vim.keymap.set({ 'i', 's' }, '<S-Tab>', function()
+      --if ls.jumpable(-1) then
+      --vim.schedule(function()
+      --ls.jump(-1)
+      --end)
+      --return ''
+      --elseif vim.fn.pumvisible() == 1 then
+      --return '<C-p>'
+      -- else
+      -- return '<S-Tab>'
+      --end
+      --end, { expr = true, silent = true })
+    end,
   },
 
   { -- You can easily change to a different colorscheme.
@@ -938,13 +964,39 @@ require('lazy').setup({
       --  Check out: https://github.com/echasnovski/mini.nvim
     end,
   },
+
+  {
+    'nvim-neo-tree/neo-tree.nvim',
+    branch = 'v3.x',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'nvim-tree/nvim-web-devicons',
+      'MunifTanjim/nui.nvim',
+    },
+    config = function()
+      require('neo-tree').setup {
+        window = {
+          width = 35,
+          mappings = {
+            ['<space>'] = 'none', -- fjern standard <space>-binding
+          },
+        },
+        filesystem = {
+          follow_current_file = true,
+          hijack_netrw_behavior = 'open_default',
+        },
+      }
+      vim.keymap.set('n', '<leader>e', '<cmd>Neotree toggle<CR>', { desc = 'Toggle file tree' })
+    end,
+  },
+
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'c_sharp', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -1012,5 +1064,28 @@ require('lazy').setup({
   },
 })
 
+-- == C /CMAKE build + run setup ===
+
+-- Find projektrod via CMakeLists.txt eller .git
+local function project_root()
+  local found = vim.fs.find({ 'CMakeLists.txt', '.git' }, { upward = true })[1]
+  return found and vim.fs.dirname(found) or vim.loop.cwd()
+end
+
+-- F5: konfigurer (første gang) og byg projektet
+vim.keymap.set('n', '<F5>', function()
+  local root = project_root()
+  vim.cmd('lcd ' .. root)
+  if vim.fn.isdirectory(root .. '/build') == 0 then
+    vim.fn.mkdir('build', 'p')
+    vim.cmd '!cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON'
+  end
+  vim.cmd 'make'
+  vim.cmd 'cwindow'
+end, { silent = true })
+
+-- Brug CMake som makeprg (så :make virker)
+vim.opt.makeprg = 'cmake --build build --parallel'
+
 -- The line beneath this is called `modeline`. See `:help modeline`
--- vim: ts=2 sts=2 sw=2 et
+--vim: ts=2 sts=2 sw=2 et

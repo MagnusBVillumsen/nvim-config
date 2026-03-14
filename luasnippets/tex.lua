@@ -120,6 +120,17 @@ ls.add_snippets('tex', {
     )
   ),
 
+  s(
+    { trig = 'codejs', wordTrig = true },
+    fmta(
+      [[
+\begin{lstlisting}[language=JavaScript]
+	<>
+\end{lstlisting}
+  ]],
+      { i(0) }
+    )
+  ),
   -- ========== Truth tables ==========
   s(
     { trig = 'tt2', wordTrig = true },

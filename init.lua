@@ -180,6 +180,64 @@ require('lazy').setup({
   -- options to `gitsigns.nvim`.
   --
   -- See `:help gitsigns` to understand what the configuration keys do
+  {
+  'folke/sidekick.nvim',
+  opts = {
+    -- Din use case er CLI/tutor, ikke Copilot auto-edits
+    nes = { enabled = false },
+
+    cli = {
+      mux = {
+        enabled = false, -- sæt true senere hvis du bruger tmux/zellij
+      },
+      prompts = {
+        explain = "Explain {selection}. Do not rewrite the code. Focus on helping me understand it.",
+        line = "Explain what the code around my cursor does. Do not suggest edits unless I ask.",
+        error = "Explain this diagnostic/error in simple terms and how I should think about it.",
+      },
+    },
+  },
+  keys = {
+    {
+      '<leader>aa',
+      function() require('sidekick.cli').toggle() end,
+      desc = 'Sidekick Toggle CLI',
+    },
+    {
+      '<leader>as',
+      function() require('sidekick.cli').select({ filter = { installed = true } }) end,
+      desc = 'Sidekick Select CLI',
+    },
+    {
+      '<leader>ac',
+      function() require('sidekick.cli').toggle({ name = 'codex', focus = true }) end,
+      desc = 'Sidekick Codex',
+    },
+    {
+      '<leader>aC',
+      function() require('sidekick.cli').toggle({ name = 'claude', focus = true }) end,
+      desc = 'Sidekick Claude',
+    },
+    {
+      '<leader>av',
+      function() require('sidekick.cli').send({ msg = '{selection}' }) end,
+      mode = { 'x' },
+      desc = 'Send Visual Selection',
+    },
+    {
+      '<leader>ap',
+      function() require('sidekick.cli').prompt() end,
+      mode = { 'n', 'x' },
+      desc = 'Sidekick Prompt',
+    },
+    {
+      '<C-.>',
+      function() require('sidekick.cli').focus() end,
+      mode = { 'n', 't', 'i', 'x' },
+      desc = 'Sidekick Focus',
+    },
+  },
+},
   { -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
     opts = {

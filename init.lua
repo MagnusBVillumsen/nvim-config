@@ -647,6 +647,19 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
+        -- PHP
+        intelephense = {},
+
+        -- TypeScript / JavaScript (Node)
+        ts_ls = {
+          root_dir = require('lspconfig').util.root_pattern('package.json', 'tsconfig.json'),
+          single_file_support = false,
+        },
+        -- Deno
+        denols = {
+          root_dir = require('lspconfig').util.root_pattern('deno.json', 'deno.jsonc'),
+          single_file_support = false,
+        },
         -- C og C++
         clangd = {},
 
@@ -737,10 +750,12 @@ require('lazy').setup({
 
       -- Map LSP-navne (fra lspconfig) til Mason-pakkenavne, hvor de adskiller sig
       local mason_map = {
+        ts_ls = 'typescript-language-server',
+        intelephense = 'intelephense',
+        denols = 'deno',
         ruff = 'ruff',
         rust_analyzer = 'rust-analyzer',
         lua_ls = 'lua-language-server',
-        cmake = 'cmake-language-server',
         texlab = 'texlab',
         -- clangd og basedpyright hedder det samme i Mason
       }

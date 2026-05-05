@@ -1106,7 +1106,7 @@ require('lazy').setup({
   -- you can continue same window with `<space>sr` which resumes last telescope search
 }, {
   git = {
-    url_format = 'git@github.com:%s.git',
+    url_format = 'https://github.com/%s.git',
     filter = false,
   },
 
